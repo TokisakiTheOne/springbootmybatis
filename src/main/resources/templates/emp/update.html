@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Title</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"/>
+</head>
+<body>
+<form action="/emp/update" method="post">
+    <table class="table">
+        <tbody>
+        <tr>
+            <td>员工编号</td>
+            <td>
+                <input type="text" name="emp_id" th:value="${emp.emp_id}" readonly="readonly"/>
+            </td>
+        </tr>
+        <tr>
+            <td>员工姓名</td>
+            <td>
+                <input type="text" name="emp_name" th:value="${emp.emp_name}"/>
+            </td>
+        </tr>
+        <tr>
+            <td>员工年龄</td>
+            <td>
+                <input type="text" name="emp_age" th:value="${emp.emp_age}"/>
+            </td>
+        </tr>
+        <tr>
+            <td>员工部门</td>
+            <td>
+                <select name="dept.dept_id">
+                    <option th:each="dept:${depts}" th:value="${dept.dept_id}" th:text="${dept.dept_name}" th:selected="${dept.dept_id eq emp.dept.dept_id}"></option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button type="reset">重置</button>
+            </td>
+            <td>
+                <button type="submit">修改</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</form>
+</body>
+</html>

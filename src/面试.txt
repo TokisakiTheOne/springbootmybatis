@@ -1,0 +1,156 @@
+1.String的是怎样实现的？有哪些重要的方法？
+
+标准的回答：(JDK1.8)
+String内部实际存储结构为char数组
+public final class String
+    implements java.io.Serializable, Comparable<String>, CharSequence {
+    //用于存储字符串的值
+    private final char value[];
+    //缓存字符串的 hashcode
+    private int hash; // Default to 0
+
+}
+
+
+
+
+
+      1.构造方法   4个重要的构造方法
+          //String参数的构造
+          public String(String original) {
+              this.value = original.value;
+              this.hash = original.hash;
+          }
+
+          //char[]参数的构造
+          public String(char value[]) {
+              this.value = Arrays.copyOf(value, value.length);
+          }
+          //StringBuffer
+          public String(StringBuffer sb){
+            synchronized(sb){
+              this.value=Arrays.copyOf(sb.getValue,sb.length());
+            }
+          }
+           //StringBuilder
+           public String(StringBuilder sb){
+               synchronized(sb){
+                this.value=Arrays.copyOf(sb.getValue,sb.length());
+            }
+          }
+       2. equals() 比较字符串是否相等
+         public boolean equals(Object anObject) {
+                //对象引用相同直接返回true
+               if (this == anObject) {
+                   return true;
+               }
+               // 判断对比的值是否为String类型，不是直接返回false
+               if (anObject instanceof String) {
+                   String anotherString = (String)anObject;
+                   int n = value.length;
+                   if (n == anotherString.value.length) {
+                   //把两个字符串都拆分成字符数组
+                       char v1[] = value;
+                       char v2[] = anotherString.value;
+                       int i = 0;
+                       //循环对比两个字符串中的每一个字符是否相等
+                       while (n-- != 0) {
+                           //如果其中一个字符串不相等，就直接返回false
+                           if (v1[i] != v2[i])
+                               return false;
+                           i++;
+                       }
+                       return true;
+                   }
+               }
+               return false;
+           }
+      String类型重写了Object的equals方法 在判断的时候需要传递一个Object类型的参数
+      在比较的时候 会先通过 instanceof 判断是否为String类型
+      * equalsIgnoreCase()  忽略大小写
+
+      3.compareTo()  字符串  比较
+          public int compareTo(String anotherString) {
+              int len1 = value.length;
+              int len2 = anotherString.value.length;
+              //获取到两者之间长度短的 int值
+              int lim = Math.min(len1, len2);
+              //把两个字符串都拆分成字符数组
+              char v1[] = value;
+              char v2[] = anotherString.value;
+
+              int k = 0;
+              //对比每一个字符
+              while (k < lim) {
+                  char c1 = v1[k];
+                  char c2 = v2[k];
+                  if (c1 != c2) {
+                      //又字符不相等就返回差值
+                      return c1 - c2;
+                  }
+                  k++;
+              }
+              return len1 - len2;
+          }
+          * compareToIgnoreCase()  忽略大小写
+
+
+          equals  compareTo
+          equals可以接受Object类型的参数，compareTo 只能接受String类型
+          equals返回值为Boolean    compareTo 返回值为int
+          两种都能判断字符串相等与否  判断相等的依据
+          equals  true        compareTo   0
+
+      4.其他重要方法
+         indexOf()        查询字符串首次出现的下标位置
+         lastIndexOf()    查询字符串最后出现的下标位置
+         contains()       查询字符串中是否包含另外一个字符串
+         toLowerCase()    转小写
+         toUpperCase()    转大写
+         length()         字符串长度
+         trim()           去掉字符串首尾的空格
+         replace()        替换掉字符串中的某个字符
+         split()          把字符串拆分成数组
+         join()           把字符串数组转为字符串
+
+
+      & 1.为什么String类型要用final?
+            1.1 final修饰的类不能被继承   （值是不能被修改的）反射
+            如果在传参的时候 不需要考虑谁会修改它的值
+            1.2 安全
+            1.3 高效  字符串常量池可以为我们提供缓存字符串，提高程序的运行效率
+        2.== 和 equals 区别是什么?
+           ==对于基本数据类型 比较的是“值” 看看值是否相等
+           对于  引用类型       比较的是引用地址是否相同
+
+            Object中  equals 方法其实就是==
+            String重写equals 方法把它修改成两个字符串的值是否相等
+
+        String   StringBuilder  StringBuffer有什么区别
+         String                 不可变类  所以每次拼接使用String的话 性能会很低  (性能差)
+          StringBuffer        (安全性高，性能一般)
+                     synchronized    来保持线程安全  提供了  append  和  insert方法进行拼接
+          @Override
+             public synchronized StringBuffer append(Object obj) {
+                 toStringCache = null;
+                 super.append(String.valueOf(obj));
+                 return this;
+             }
+
+             @Override
+             public synchronized StringBuffer append(String str) {
+                 toStringCache = null;
+                 super.append(str);
+                 return this;
+             }
+         StringBuilder  从JDK1.5  出现   (性能高，安全差) 在非并发环境下优先使用
+         append  insert
+          public AbstractStringBuilder append(Object obj) {
+                 return append(String.valueOf(obj));
+             }
+
+        String的 intern()方法有什么含义
+        String类型 在  JVM中 如何存储的？编译器又对String做了哪些优化呢？
+
+
+

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Title</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"/>
+</head>
+<body>
+<form action="/emp/insert" method="post">
+    <table class="table">
+        <tbody>
+        <tr>
+            <td>员工姓名</td>
+            <td>
+                <input type="text" name="emp_name" />
+            </td>
+        </tr>
+        <tr>
+            <td>员工年龄</td>
+            <td>
+                <input type="text" name="emp_age" />
+            </td>
+        </tr>
+        <tr>
+            <td>员工部门</td>
+            <td>
+                <select name="dept.dept_id">
+                    <option th:each="dept:${depts}" th:value="${dept.dept_id}" th:text="${dept.dept_name}"></option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button type="reset">重置</button>
+            </td>
+            <td>
+                <button type="submit">添加</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</form>
+</body>
+</html>

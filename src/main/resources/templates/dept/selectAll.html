@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Title</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"/>
+</head>
+<body>
+<table class="table">
+    <thead>
+    <tr align="center">
+        <th>部门编号</th>
+        <th>部门名称</th>
+        <th>部门操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="dept:${depts}" align="center">
+        <td th:text="${dept.dept_id}"></td>
+        <td th:text="${dept.dept_name}"></td>
+        <td>
+            <a th:href="@{/dept/delete(dept_id=${dept.dept_id})}">删除</a>
+            <a th:href="@{/dept/selectById(dept_id=${dept.dept_id})}">修改</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<a href="/dept/toInsert">添加信息</a>
+
+</body>
+</html>
