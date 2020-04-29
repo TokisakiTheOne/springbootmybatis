@@ -26,4 +26,12 @@ class SpringbootmybatisApplicationTests {
         System.out.println(s3==s4);
     }
 
+    @Test
+    void contextLoads1() {
+          Thread t = new Thread();
+          t.yield();
+
+
+    }
+
 }

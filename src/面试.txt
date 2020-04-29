@@ -7,7 +7,7 @@ public final class String
     //用于存储字符串的值
     private final char value[];
     //缓存字符串的 hashcode
-    private int hash; // Default to 0
+    private int hash; // Default to 0。
 
 }
 
@@ -146,11 +146,92 @@ public final class String
          StringBuilder  从JDK1.5  出现   (性能高，安全差) 在非并发环境下优先使用
          append  insert
           public AbstractStringBuilder append(Object obj) {
-                 return append(String.valueOf(obj));
+                 return append(String.valueOf(obj));5
              }
 
         String的 intern()方法有什么含义
         String类型 在  JVM中 如何存储的？编译器又对String做了哪些优化呢？
+         String常见的创建方式   new String();  直接赋值
+         直接赋值的方式会向常量池中查找是否存在这个值  如果存在，就把引用地址指向此值
+         否则会先在常量池中创建 然后再打引用指向此值
+         JDK1.7之后 把永生代换成元空间，把字符串常量池从方法区转移到了Java堆上
+
+      优化
+                String s1="Ja"+"va";    在JVM中编译过程会直接把当前的"Ja"+"va" 转换成 "Java"
+                String s2="Java";
+                System.out.println(s1==s2);  true
+
+2.线程的状态有哪些？它是如何工作的？
+   线程(Thread) 是并发编程的基础，也是程序执行的最小单元，它依托进程而存在。一个进程可以包含多个线程。
+   多线程可以共享一块内存和一组系统资源，因此线程之间的切换更加节省资源、更加轻量化，（轻量级进程）
+
+   JDK1.5之后 以枚举的类型定义在Thread源码中   6个状态
+
+   1.  NEW
+        新建状态  线程被创建出来，没有启动的时候
+   2.  RUNNABLE
+        就绪状态  表示可以运行的线程状态，它可能正在运行，或者排队等待CPU分配资源运行
+   3.  BLOCKED
+        阻塞等待锁的线程状态
+        (阻塞状态)
+        表示处于阻塞状态的线程正在等待监视器锁， 比如等待执行 synchronized 代码块或者 synchronized 标记的方法
+   4.  WAITING
+        等待状态 一个处于等待状态的线程正在等待另一个线程执行某个特定动作
+        Object.wait();    其他线程调用  Object.notify() 或者  Object.notifyAll()
+   5.  TIMED_WAITING
+        计时等待状态  和等待状态类似，多设置了超时时间
+        Object.wait(long timeout);     Thread.join(long timeout)
+   6.  TERMINATED4
+        终止状态 表示线程已经执行完成
+
+   线程的工作模式：
+       1.首先先创建线程并指定需要执行的方法，然后调用线程的 start()方法,此时线程就从NEW=>RUNNABLE
+       2.线程会判断要执行的方法中有没有synchronized同步代码块，如果有并且其他线程也在使用，那么线程会变为BLOCKED
+       3.当其他线程使用完这个锁之后，线程会继续执行剩余的方法
+       4.当遇到Object.wait()  或者 Thread.join() 方法时，线程会变为WAITING，若果时带了超时时间的方法 那么会进入
+       TIMED_WAITING，当其他线程执行了Object.notify() 或者  Object.notifyAll()，线程会被唤醒继续执行剩余的方法
+       直到方法全部执行完毕，最后进入TERMINATED
+
+
+   BLOCKED 和 WAITING 有什么区别?
+   start()方法和run()有什么区别?
+   线程的优先级有什么用？怎么设置？
+
+   线程的常用方法有哪些？
+   1.join()
+     在一个线程中调用other.join()，这时当前线程会让出执行权给other线程，知道other线程执行完毕，或者过了超时时间，然后在运行当前线程
+     public final synchronized void join(long millis)
+        throws InterruptedException {
+            long base = System.currentTimeMillis();
+            long now = 0;
+            //超时时间不能小于 0
+            if (millis < 0) {
+                throw new IllegalArgumentException("timeout value is negative");
+            }
+            //0 代表无限等待
+            if (millis == 0) {
+
+                while (isAlive()) {
+                    wait(0);
+                }
+            } else {
+                while (isAlive()) {
+                    long delay = millis - now;
+                    if (delay <= 0) {
+                        break;
+                    }
+                    wait(delay);
+                    now = System.currentTimeMillis() - base;
+                }
+            }
+        }
+
+     yield()   本地方法   C 或者C++实现的
+         public static native void yield();
+         该方法表示给线程调度器一个当前线程愿意让出CPU使用权的暗示，但是线程调度器可能会忽略这个暗示
+         使用这个方法可能每次执行的结果都不一样，这是因为这个方法非常不稳定，线程调度器不一定会采纳yield出让CPU资源的建议
+
+
 
 
 
